@@ -1,7 +1,8 @@
 import React, { Component, Fragment } from 'react'
-import { StyleSheet, SafeAreaView, View } from 'react-native'
-import { Button } from 'react-native-elements'
+import { StyleSheet, SafeAreaView, View, ToastAndroid } from 'react-native'
+import { Button, Header } from 'react-native-elements'
 import qs from "querystring";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import FormInput from '../components/FormInput'
 import FormButton from '../components/FormButton'
 import ErrorMessage from "../components/ErrorMessage";
@@ -21,12 +22,42 @@ const validationSchema = yup.object().shape({
     .required('Please enter password')
 })
 
+const Toast = (props) => {
+  if (props.visible) {
+    ToastAndroid.showWithGravityAndOffset(
+      props.message,
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER,
+      25,
+      50
+    );
+    return null;
+  }
+  return null;
+};
+
 class Login extends Component {
   state = {
     email: '',
     password: '',
+    visible: false,
   }
 
+  handleButtonPress = () => {
+    setTimeout(() => {
+      if (this.props.login.isRejected) {
+        this.setState({
+          visible: true
+        }, () => this.hideToast());
+      }
+    }, 500);
+  };
+
+  hideToast = () => {
+    this.setState({
+      visible: false
+    });
+  };
 
   handleEmailChange = email => {
     this.setState({ email })
@@ -38,26 +69,40 @@ class Login extends Component {
 
 
   handleSubmit = values => {
-    // const { email, password } = values
     this.props.loginAction(qs.stringify(values))
   }
 
-  componentDidUpdate() {
-    const { isFulfilled } = this.props.login
-    const { refreshToken } = this.props.login.response
-    if (isFulfilled) {
-      this.props.tokenAction(qs.stringify({
-        token: refreshToken
-      }))
-      this.props.navigation.navigate("Home")
+  componentDidUpdate(prevProps) {
+    if (prevProps.login !== this.props.login) {
+      const { isFulfilled } = this.props.login
+      const { refreshToken } = this.props.login.response
+      if (isFulfilled) {
+        this.props.tokenAction(qs.stringify({
+          token: refreshToken
+        }))
+        this.props.navigation.navigate("Home")
+      }
     }
   }
 
   goToSignup = () => this.props.navigation.navigate('Register')
 
+  goBack = () => this.props.navigation.goBack()
+
   render() {
+    const { visible } = this.state
+    const { errorMsg, isRejected } = this.props.login
     return (
       <SafeAreaView style={styles.container}>
+        <Header containerStyle={styles.header}
+          backgroundColor="#F8"
+          placement="left"
+          leftComponent={<Button
+            buttonStyle={{ backgroundColor: "#f4f4f4", borderRadius: 50 }}
+            icon={<Ionicons name="md-arrow-back" size={24} />}
+            onPress={this.goBack} />}
+          centerComponent={{ text: 'Login', style: { color: '#000000', fontSize: 22 } }}
+        />
         <Formik
           initialValues={{ email: '', password: '', }}
           onSubmit={values => { this.handleSubmit(values) }}
@@ -99,11 +144,10 @@ class Login extends Component {
                 <View style={styles.buttonContainer}>
                   <FormButton
                     buttonType='outline'
-                    onPress={handleSubmit}
+                    onPress={() => { handleSubmit(); this.handleButtonPress() }}
                     title='Login'
                     buttonColor='#000000'
-                    disabled={!isValid || isSubmitting}
-                    loading={isSubmitting}
+                    disabled={!isValid}
                   />
                 </View>
               </Fragment>
@@ -117,6 +161,7 @@ class Login extends Component {
           }}
           type='clear'
         />
+        <Toast visible={visible} message={errorMsg} />
       </SafeAreaView>
     )
   }
@@ -129,7 +174,12 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     margin: 20
-  }
+  },
+  header: {
+    paddingTop: 0,
+    height: 60,
+    backgroundColor: "#F4F4F4"
+  },
 })
 
 const mapStateToProps = ({

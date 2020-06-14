@@ -16,14 +16,17 @@ export const getBooks = (data) => {
   return Axios.get(`http://192.168.43.73:5000/books?${data}`)
 }
 
-export const getBookById = (id) => {
-  return Axios.get(`${process.env.REACT_APP_URL}/books/${id}`,
-    {
-      headers: {
-        "Authorization": localStorage.getItem("token")
-      }
-    })
+// export const getBookById = (id) => {
+//   return Axios.get(`http://192.168.43.73:5000/books/${id}`,
+//     {
+//       headers: {
+//         "Authorization": localStorage.getItem("token")
+//       }
+//     })
+// }
 
+export const getBookByRecommended = () => {
+  return Axios.get(`http://192.168.43.73:5000/books/recommended`)
 }
 
 export const postBook = (body, token) => {
@@ -135,65 +138,65 @@ export const getStatus = (token) => {
     })
 }
 
-export const borrowBook = (id, body) => {
-  return Axios.put(`${process.env.REACT_APP_URL}/books/user/${id}`, body,
+export const borrowBook = (id, body, token) => {
+  return Axios.put(`http://192.168.43.73:5000/books/user/${id}`, body,
     {
       headers: {
-        "Authorization": localStorage.getItem("token")
+        "Authorization": token
       }
     })
 }
 
-export const getBorrow = () => {
-  return Axios.get(`${process.env.REACT_APP_URL}/borrow`,
+export const getBorrow = (token) => {
+  return Axios.get(`http://192.168.43.73:5000/borrow`,
     {
       headers: {
-        "Authorization": localStorage.getItem("token")
+        "Authorization": token
       }
     })
 }
 
-export const getBorrowById = (id) => {
-  return Axios.get(`${process.env.REACT_APP_URL}/borrow/${id}`,
+export const getBorrowById = (id, token) => {
+  return Axios.get(`http://192.168.43.73:5000/borrow/${id}`,
     {
       headers: {
-        "Authorization": localStorage.getItem("token")
+        "Authorization": token
       }
     })
 }
 
-export const postBorrow = (body) => {
-  return Axios.post(`${process.env.REACT_APP_URL}/borrow`, body,
+export const postBorrow = (body, token) => {
+  return Axios.post(`http://192.168.43.73:5000/borrow`, body,
     {
       headers: {
-        "Authorization": localStorage.getItem("token")
+        "Authorization": token
       }
     })
 }
 
-export const putBorrow = (body) => {
-  return Axios.put(`${process.env.REACT_APP_URL}/borrow`, body,
+export const putBorrow = (body, token) => {
+  return Axios.put(`http://192.168.43.73:5000/borrow`, body,
     {
       headers: {
-        "Authorization": localStorage.getItem("token")
+        "Authorization": token
       }
     })
 }
 
-export const getOrder = () => {
-  return Axios.get(`${process.env.REACT_APP_URL}/order`,
+export const getOrder = (token) => {
+  return Axios.get(`http://192.168.43.73:5000/order`,
     {
       headers: {
-        "Authorization": localStorage.getItem("token")
+        "Authorization": token
       }
     })
 }
 
-export const postOrder = (body) => {
-  return Axios.post(`${process.env.REACT_APP_URL}/order`, body,
+export const postOrder = (body, token) => {
+  return Axios.post(`http://192.168.43.73:5000/order`, body,
     {
       headers: {
-        "Authorization": localStorage.getItem("token")
+        "Authorization": token
       }
     })
 }

@@ -1,16 +1,16 @@
-import {getOrderAction, postOrderAction} from './actionTypes'
-import {getOrder, postOrder} from '../../utils/http'
+import { getOrderAction, postOrderAction } from './actionTypes'
+import { getOrder, postOrder } from '../../utils/http'
 
-export const getOrderActionCreator = () => {
-        return {
-            type: getOrderAction,
-            payload: getOrder()
-        }
+export const getOrderActionCreator = (token) => {
+    return {
+        type: getOrderAction,
+        payload: getOrder(token)
+    }
 }
 
-export const postOrderActionCreator = (body) => {
+export const postOrderActionCreator = (body, token) => {
     return {
         type: postOrderAction,
-        payload: postOrder(body)
+        payload: postOrder(body, token)
     }
 }

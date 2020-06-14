@@ -1,15 +1,14 @@
 import React, { Component } from "react"
-import { debounce } from "lodash";
-import { FlatList, StyleSheet, View, Image, BackHandler } from "react-native"
-import { ListItem, Text, SearchBar } from "react-native-elements"
+import { FlatList, StyleSheet, View, Image } from "react-native"
+import { ListItem, Text, Header, Button } from "react-native-elements"
 import qs from "querystring";
 import SortBy from "../components/SortBy";
 import { TouchableOpacity } from "react-native-gesture-handler"
+import Ionicons from "react-native-vector-icons/Ionicons";
 import { connect } from "react-redux";
-import { getBookBySearchActionCreator, getBookBySearchPageActionCreator, deleteBookBySearchActionCreator } from "../redux/actions/books";
+import { getBookByGenreActionCreator, getBookByGenrePageActionCreator, deleteBookByGenreActionCreator } from "../redux/actions/books";
 
-
-class Search extends Component {
+class GenreBook extends Component {
 
   state = {
     search: '',
@@ -17,24 +16,12 @@ class Search extends Component {
   }
 
   componentDidMount() {
-    this.deleteSearch()
-  }
-
-  getBookBySearchDebounce = debounce(() => this.getBookBySearch(), 500)
-
-  updateSearch = search => {
+    this.deleteGenre()
+    const { search } = this.props.route.params
     this.setState({
       search,
       page: 1,
-    }, () => this.getBookBySearchDebounce())
-  };
-
-  getBookBySearch = async () => {
-    const { search } = this.state
-    const { getBookBySearchAction } = this.props
-    if (search.length > 0) {
-      await getBookBySearchAction(qs.stringify(this.state))
-    }
+    }, () => this.props.getBookByGenreAction(qs.stringify(this.state)))
   }
 
   keyExtractor = (item, index) => index.toString()
@@ -62,7 +49,7 @@ class Search extends Component {
       value: 'books.title',
       sort: 'true',
       page: 1
-    }, () => this.props.getBookBySearchAction(qs.stringify(this.state)))
+    }, () => this.props.getBookByGenreAction(qs.stringify(this.state)))
   }
 
   handleSortTitleZA = () => {
@@ -70,7 +57,7 @@ class Search extends Component {
       value: 'books.title',
       sort: 'false',
       page: 1
-    }, () => this.props.getBookBySearchAction(qs.stringify(this.state)))
+    }, () => this.props.getBookByGenreAction(qs.stringify(this.state)))
   }
 
   handleSortAuthorAZ = () => {
@@ -78,7 +65,7 @@ class Search extends Component {
       value: 'author.author',
       sort: 'true',
       page: 1
-    }, () => this.props.getBookBySearchAction(qs.stringify(this.state)))
+    }, () => this.props.getBookByGenreAction(qs.stringify(this.state)))
   }
 
   handleSortAuthorZA = () => {
@@ -86,27 +73,27 @@ class Search extends Component {
       value: 'author.author',
       sort: 'false',
       page: 1
-    }, () => this.props.getBookBySearchAction(qs.stringify(this.state)))
+    }, () => this.props.getBookByGenreAction(qs.stringify(this.state)))
   }
 
   scroll = () => {
-    const { totalPage, page } = this.props.books.resSearchPage
+    const { totalPage, page } = this.props.books.resGenrePage
     if (page < totalPage) {
       this.setState({
         page: page + 1
-      }, () => this.props.getBookBySearchPageAction(qs.stringify(this.state)))
+      }, () => this.props.getBookByGenrePageAction(qs.stringify(this.state)))
     }
   }
 
   detailBook = (id) => {
     this.props.navigation.navigate("Detail", {
       id,
-      page: 'search'
+      page: 'genre'
     })
   }
 
-  deleteSearch = () => {
-    this.props.deleteBookBySearchAction()
+  deleteGenre = () => {
+    this.props.deleteBookByGenreAction()
   }
 
   keyExtractor = (item, index) => index.toString()
@@ -138,38 +125,28 @@ class Search extends Component {
   }
 
   render() {
-    const { search } = this.state
     const { books } = this.props
-    const searchBar =
-      (<SearchBar
-        platform='android'
-        containerStyle={styles.search}
-        placeholder="Search book.."
-        onChangeText={this.updateSearch}
-        value={search}
-        returnKeyType='search'
-        inputContainerStyle={{
-          backgroundColor: '#e0e0e0', overflow: 'hidden', borderRadius: 30,
-        }}
-        autoFocus
-        onCancel={() => { this.goBack(); this.deleteSearch() }}
-        onClear={this.deleteSearch}
-      />)
+    const { search } = this.props.route.params
     return (
       <View
         style={styles.container}>
-        {searchBar}
-        {search.length > 0 ?
-          books.resSearch[0] === undefined ?
-            <Text style={{ marginLeft: 20, fontSize: 18 }}>No result found "{search}"</Text> :
-            <FlatList
-              keyExtractor={this.keyExtractor}
-              data={books.resSearch}
-              renderItem={this.renderItem}
-              onEndReachedThreshold={0.1}
-              onEndReached={this.scroll}
-              keyboardShouldPersistTaps='handled'
-            /> : <></>}
+        <Header
+          containerStyle={styles.header}
+          placement="left"
+          leftComponent={<Button
+            buttonStyle={{ backgroundColor: "#f4f4f4", borderRadius: 50 }}
+            icon={<Ionicons name="md-arrow-back" size={24} />}
+            onPress={this.goBack} />}
+          centerComponent={{ text: `${search}`, style: { color: '#000000', fontSize: 22 } }}
+        />
+        <FlatList
+          keyExtractor={this.keyExtractor}
+          data={books.resGenre}
+          renderItem={this.renderItem}
+          onEndReachedThreshold={0.1}
+          onEndReached={this.scroll}
+          keyboardShouldPersistTaps='handled'
+        />
         <SortBy
           handleSortTitleAZ={this.handleSortTitleAZ}
           handleSortTitleZA={this.handleSortTitleZA}
@@ -184,6 +161,11 @@ class Search extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  header: {
+    paddingTop: 0,
+    height: 60,
+    backgroundColor: "#F4F4F4"
   },
   image: {
     width: 102,
@@ -206,16 +188,16 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getBookBySearchAction: (body) => {
-      dispatch(getBookBySearchActionCreator(body))
+    getBookByGenreAction: (body) => {
+      dispatch(getBookByGenreActionCreator(body))
     },
-    getBookBySearchPageAction: (body) => {
-      dispatch(getBookBySearchPageActionCreator(body))
+    getBookByGenrePageAction: (body) => {
+      dispatch(getBookByGenrePageActionCreator(body))
     },
-    deleteBookBySearchAction: () => {
-      dispatch(deleteBookBySearchActionCreator())
-    }
+    deleteBookByGenreAction: () => {
+      dispatch(deleteBookByGenreActionCreator())
+    },
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Search)
+export default connect(mapStateToProps, mapDispatchToProps)(GenreBook)

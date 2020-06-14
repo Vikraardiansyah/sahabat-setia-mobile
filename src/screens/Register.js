@@ -1,9 +1,10 @@
 import React, { Component, Fragment } from 'react'
-import { StyleSheet, SafeAreaView, View } from 'react-native'
-import { Button } from 'react-native-elements'
+import { StyleSheet, SafeAreaView, View, ToastAndroid } from 'react-native'
+import { Button, Header } from 'react-native-elements'
 import FormInput from '../components/FormInput'
 import FormButton from '../components/FormButton'
 import ErrorMessage from "../components/ErrorMessage";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import qs from "querystring";
 import { Formik } from 'formik'
 import * as yup from 'yup'
@@ -30,13 +31,44 @@ const validationSchema = yup.object().shape({
     }),
 })
 
+const Toast = (props) => {
+  if (props.visible) {
+    ToastAndroid.showWithGravityAndOffset(
+      props.message,
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER,
+      25,
+      50
+    );
+    return null;
+  }
+  return null;
+};
+
 class Register extends Component {
   state = {
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
+    visible: false,
   }
+
+  handleButtonPress = () => {
+    setTimeout(() => {
+      if (this.props.register.isRejected) {
+        this.setState({
+          visible: true
+        }, () => this.hideToast());
+      }
+    }, 500);
+  };
+
+  hideToast = () => {
+    this.setState({
+      visible: false
+    });
+  };
 
   handleNameChange = name => {
     this.setState({ name })
@@ -67,16 +99,32 @@ class Register extends Component {
 
   goToLogin = () => this.props.navigation.navigate('Login')
 
-  componentDidUpdate() {
-    const { isFulfilled } = this.props.register
-    if (isFulfilled) {
-      this.props.navigation.navigate('Login')
+  goBack = () => this.props.navigation.goBack()
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.register !== this.props.register) {
+      const { isFulfilled } = this.props.register
+      if (isFulfilled) {
+        this.props.navigation.navigate('Login')
+      }
     }
+
   }
 
   render() {
+    const { visible } = this.state
+    const { errorMsg } = this.props.register
     return (
       <SafeAreaView style={styles.container}>
+        <Header containerStyle={styles.header}
+          backgroundColor="#F8"
+          placement="left"
+          leftComponent={<Button
+            buttonStyle={{ backgroundColor: "#f4f4f4", borderRadius: 50 }}
+            icon={<Ionicons name="md-arrow-back" size={24} />}
+            onPress={this.goBack} />}
+          centerComponent={{ text: 'Register', style: { color: '#000000', fontSize: 22 } }}
+        />
         <Formik
           initialValues={{ name: '', email: '', password: '', confirmPassword: '', }}
           onSubmit={values => { this.handleSubmit(values) }}
@@ -86,7 +134,6 @@ class Register extends Component {
             handleSubmit,
             errors,
             isValid,
-            isSubmitting,
             touched,
             handleBlur,
           }) => (
@@ -140,11 +187,10 @@ class Register extends Component {
                 <View style={styles.buttonContainer}>
                   <FormButton
                     buttonType='outline'
-                    onPress={handleSubmit}
+                    onPress={() => { handleSubmit(); this.handleButtonPress() }}
                     title='Sign Up'
                     buttonColor='#000000'
-                    disabled={!isValid || isSubmitting}
-                    loading={isSubmitting}
+                    disabled={!isValid}
                   />
                 </View>
               </Fragment>
@@ -158,6 +204,7 @@ class Register extends Component {
           }}
           type='clear'
         />
+        <Toast visible={visible} message={errorMsg} />
       </SafeAreaView>
     )
   }
@@ -170,7 +217,12 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     margin: 20
-  }
+  },
+  header: {
+    paddingTop: 0,
+    height: 60,
+    backgroundColor: "#F4F4F4"
+  },
 })
 
 const mapStateToProps = ({

@@ -1,252 +1,183 @@
 import React, { Component } from 'react'
-import { StyleSheet, SafeAreaView, View, Picker, Image } from 'react-native'
-import { Button } from 'react-native-elements'
-import qs from "querystring"
-import FormInput from '../components/FormInput'
-import ErrorMessage from "../components/ErrorMessage"
-import ImagePicker from 'react-native-image-picker'
+import { StyleSheet, SafeAreaView, View, FlatList } from 'react-native'
+import { ListItem, Text, Header, Image, Button } from 'react-native-elements'
+import qs from "querystring";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import Modal from "react-native-modal";
 import { connect } from "react-redux";
-import { getAuthorActionCreator } from "../redux/actions/author"
-import { getGenreActionCreator } from "../redux/actions/genre"
-import { getStatusActionCreator } from "../redux/actions/status";
-import { postBookActionCreator } from "../redux/actions/books";
-import { Formik } from 'formik'
-import * as yup from 'yup'
+import { getOrderActionCreator } from "../redux/actions/order"
+import { getBorrowActionCreator, getBorrowByIdActionCreator, putBorrowActionCreator } from "../redux/actions/borrow";
+import { borrowBookActionCreator } from "../redux/actions/books";
 
-const validationSchema = yup.object().shape({
-  title: yup.string()
-    .label('Email')
-    .required('Please fill the form'),
-  description: yup.string()
-    .label('Password')
-    .required('Please fill the form'),
-  id_author: yup.string()
-    .label('id_author')
-    .required('Please fill the form'),
-  id_genre: yup.string()
-    .label('id_genre')
-    .required('Please fill the form'),
-  id_status: yup.string()
-    .label('id_status')
-    .required('Please fill the form'),
-})
 
-class AddBook extends Component {
+class History extends Component {
   state = {
-    email: '',
-    password: '',
-    image: null,
+    modalReturn: false
   }
 
-  componentDidMount() {
-    const { author, genre, status, login, getAuthorAction, getGenreAction, getStatusAction } = this.props
-    const { role } = this.props.login.response
-    const { token } = this.props.login
-    if (role === 1) {
-      getAuthorAction(token)
-      getGenreAction(token)
-      getStatusAction(token)
+  async componentDidMount() {
+    const { getBorrowByIdAction, getOrderAction, getBorrowAction, order, borrow } = this.props
+    const { token, response, } = this.props.login
+    if (response.role === 1 && !order.isFulfilled) {
+      await getOrderAction(token)
+    }
+    if (response.role === 1 && !borrow.isFulfilled) {
+      await getBorrowAction(token)
+    }
+    if (response.role === 2 && !borrow.isFulfilled) {
+      await getBorrowByIdAction(response.id, token)
     }
   }
 
-
-  handleSubmit = values => {
-    const { title, description, id_author, id_genre, id_status } = values
-    const form = new FormData()
-    const { postBookAction, author, genre, status } = this.props
+  returnBook = async (id_book, id_user) => {
     const { token } = this.props.login
-    const { image } = this.state
-    form.append("title", title)
-    form.append("description", description)
-    form.append("id_author", id_author)
-    const dataAuthor = author.response.filter(
-      author => author.id === id_author)
-    form.append("author", dataAuthor[0].author)
-    form.append("id_genre", id_genre)
-    const dataGenre = genre.response.filter(
-      genre => genre.id === id_genre)
-    form.append("genre", dataGenre[0].genre)
-    form.append("id_status", id_status)
-    const dataStatus = status.response.filter(
-      status => status.id === id_status)
-    form.append("status", dataStatus[0].status)
-    form.append("image", image)
-    postBookAction(form, token)
+    const { putBorrowAction, borrowBookAction } = this.props
+    await borrowBookAction(id_book, qs.stringify({
+      id_status: 1,
+      email_borrow: '',
+      status: "Available"
+    }), token)
+    await putBorrowAction(qs.stringify({
+      id_book,
+      id_user,
+      status: 1,
+      return_at: new Date().toISOString(),
+    }), token)
   }
 
-  handleChoosePhoto = () => {
-    const options = {
-      title: 'Select Image',
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
-    ImagePicker.showImagePicker(options, (response) => {
+  keyExtractor = (item, index) => index.toString()
 
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
-      } else {
-
-        this.setState({
-          image: response,
-        });
+  renderItem = ({ item }) => (
+    <ListItem
+      title={item.title}
+      subtitle={
+        <View style={styles.subtitleView}>
+          {this.props.login.response.role === 1 ? <>
+            <Text style={styles.ratingText}>{item.name}</Text>
+            <Text style={styles.ratingText}>{item.email}</Text>
+          </> : <></>}
+          <Text style={styles.ratingText}>Borrow: {new Date(item.borrow_at).toLocaleDateString()}</Text>
+          {item.status === 1 && this.props.login.response.role === 2 ? <Text style={styles.ratingText}>Return: {new Date(item.return_at).toLocaleDateString()}</Text> : <Text style={styles.ratingText}>Return: -</Text>}
+        </View>
       }
-    });
-  };
+      leftElement={<Image
+        source={{ uri: `http://192.168.43.73:5000/${item.image}` }}
+        style={styles.image} />}
+      rightElement={item.status === 2 ? <Button
+        title="Return"
+        buttonStyle={styles.returnButton}
+        raised
+        onPress={() => this.toggleModalReturn(item.id_book, item.id_user)}
+      /> : <></>}
+      topDivider
+    />
+  )
 
-  goToSignup = () => this.props.navigation.navigate('Register')
+  toggleModalReturn = (id_book, id_user) => {
+    this.setState({
+      modalReturn: !this.state.modalReturn,
+      id_book,
+      id_user
+    })
+  }
+
+  goBack = () => {
+    this.props.navigation.goBack()
+  }
 
   render() {
-    const { image } = this.state
-    const { author, genre, status } = this.props
+    const { resBorrow, isLoading } = this.props.borrow
+    const { id_book, id_user, modalReturn } = this.state
     return (
-      <SafeAreaView style={styles.container}>
-        <Formik
-          initialValues={{ title: '', description: '', id_author: '', id_genre: '', id_status: '' }}
-          onSubmit={values => { this.handleSubmit(values) }}
-          validationSchema={validationSchema} >
-          {({ handleChange,
-            values,
-            handleSubmit,
-            errors,
-            isValid,
-            isSubmitting,
-            touched,
-            handleBlur,
-            setFieldValue
-          }) => (
-              <View>
-                <ErrorMessage errorValue={touched.name && errors.name} />
-                <FormInput
-                  name='title'
-                  value={values.title}
-                  onChangeText={handleChange('title')}
-                  placeholder='Enter title'
-                  autoCapitalize='words'
-                  onBlur={handleBlur('title')}
-                />
-                <ErrorMessage errorValue={touched.title && errors.title} />
-                <FormInput
-                  name='description'
-                  value={values.description}
-                  onChangeText={handleChange('description')}
-                  placeholder='Enter description'
-                  autoCapitalize='sentences'
-                  onBlur={handleBlur('description')}
-                />
-                <ErrorMessage errorValue={touched.description && errors.description} />
-                <Picker
-                  style={styles.picker}
-                  name='id_author'
-                  selectedValue={values.id_author}
-                  onValueChange={itemValue => setFieldValue('id_author', itemValue)}
-                >
-                  <Picker.Item label="--Choose Author--" value="" />
-                  {author.response.map(author =>
-                    <Picker.Item key={author.id} label={author.author} value={author.id} />)}
-                </Picker>
-                <ErrorMessage errorValue={touched.id_author && errors.id_author} />
-                <Picker
-                  style={styles.picker}
-                  name='id_genre'
-                  selectedValue={values.id_genre}
-                  onValueChange={itemValue => setFieldValue('id_genre', itemValue)}>
-                  <Picker.Item label="--Choose Genre--" value="" />
-                  {genre.response.map(genre =>
-                    <Picker.Item key={genre.id} label={genre.genre} value={genre.id} />)}
-                </Picker>
-                <ErrorMessage errorValue={touched.id_genre && errors.id_genre} />
-                <Picker
-                  style={styles.picker}
-                  name='id_status'
-                  selectedValue={values.id_status}
-                  onValueChange={itemValue => setFieldValue('id_status', itemValue)}>
-                  <Picker.Item label="--Choose Status--" value="" />
-                  {status.response.map(status =>
-                    <Picker.Item key={status.id} label={status.status} value={status.id} />)}
-                </Picker>
-                <ErrorMessage errorValue={touched.id_status && errors.id_status} />
-                <View style={styles.buttonContainer}>
-                  {image && (
-                    <Image
-                      source={{ uri: image.uri }}
-                      style={{ width: 100, height: 150 }}
-                    />
-                  )}
-                  <Button
-                    title="Choose Photo"
-                    onPress={this.handleChoosePhoto}
-                    type="outline"
-                    titleStyle={{ color: '#000000' }}
-                    buttonStyle={{ borderColor: "#000000" }}
-                  />
-                </View>
-                <View style={styles.buttonContainer}>
-                  <Button
-                    type="outline"
-                    titleStyle={{ color: '#000000' }}
-                    buttonStyle={{ borderColor: "#000000" }}
-                    onPress={handleSubmit}
-                    title='Add'
-                    disabled={!isValid || isSubmitting}
-                    loading={isSubmitting}
-                  />
-                </View>
-              </View>
-            )}
-        </Formik>
-      </SafeAreaView >
+      <View style={styles.container}>
+        <Header containerStyle={{ paddingTop: -30, height: 60 }}
+          backgroundColor="#F8"
+          placement="left"
+          leftComponent={<Button
+            buttonStyle={{ backgroundColor: "#f4f4f4", borderRadius: 50 }}
+            icon={<Ionicons name="md-arrow-back" size={24} />}
+            onPress={this.goBack} />}
+          centerComponent={{ text: 'History', style: { color: '#000000', fontSize: 22 } }}
+        />
+        <FlatList
+          keyExtractor={this.keyExtractor}
+          data={resBorrow}
+          renderItem={this.renderItem}
+        />
+        {/* modal return */}
+        <Modal isVisible={modalReturn} onBackButtonPress={this.toggleModalReturn} onBackdropPress={this.toggleModalReturn} >
+          <View style={{ flex: 0.1, backgroundColor: "white", borderRadius: 10, justifyContent: 'center', padding: 20, margin: 50 }}>
+            <Text style={{ textAlign: 'center', fontSize: 20 }}>Are you sure want to return this book?</Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+              <Button title="Yes" type="clear" onPress={() => { this.toggleModalReturn(); this.returnBook(id_book, id_user) }} />
+              <Button title="No" type="clear" onPress={this.toggleModalReturn} />
+            </View>
+          </View>
+        </Modal>
+      </View>
     )
   }
 }
 
-const styles = StyleSheet.create({
+styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
   },
-  buttonContainer: {
-    margin: 20, width: 150
+  subtitleView: {
+    flex: 1,
+    marginLeft: -10,
   },
-  picker: {
-    marginLeft: 15, width: 200
-  }
+  ratingImage: {
+    height: 19.21,
+    width: 100
+  },
+  ratingText: {
+    paddingLeft: 10,
+    color: '#7e7e7e'
+  },
+  image: {
+    width: 101,
+    height: 150,
+    borderRadius: 5,
+  },
+  returnButton: {
+    width: 100,
+    height: 50,
+    borderRadius: 50,
+    backgroundColor: '#FF0000'
+  },
 })
 
 const mapStateToProps = ({
-  author,
-  genre,
-  status,
-  login
+  order,
+  borrow,
+  login,
 }) => {
   return {
-    author,
-    genre,
-    status,
-    login
+    order,
+    borrow,
+    login,
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getAuthorAction: (token) => {
-      dispatch(getAuthorActionCreator(token))
+    getOrderAction: (token) => {
+      dispatch(getOrderActionCreator(token))
     },
-    getGenreAction: (token) => {
-      dispatch(getGenreActionCreator(token))
+    getBorrowAction: (token) => {
+      dispatch(getBorrowActionCreator(token))
     },
-    getStatusAction: (token) => {
-      dispatch(getStatusActionCreator(token))
+    getBorrowByIdAction: (id, token) => {
+      dispatch(getBorrowByIdActionCreator(id, token))
     },
-    postBookAction: (body, token) => {
-      dispatch(postBookActionCreator(body, token))
-    }
+    putBorrowAction: (body, token) => {
+      dispatch(putBorrowActionCreator(body, token))
+    },
+    borrowBookAction: (id, body, token) => {
+      dispatch(borrowBookActionCreator(id, body, token))
+    },
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddBook)
+export default connect(mapStateToProps, mapDispatchToProps)(History)

@@ -23,8 +23,12 @@ const appReducer = combineReducers({
 
 const rootReducer = (state, action) => {
     if (action.type === logoutAction) {
-        state = undefined
-    } else if (action.type === REHYDRATE) {
+        delete state.login
+        delete state.borrow
+        delete state.order
+        // state = undefined
+    }
+    if (action.type === REHYDRATE) {
         state = action.payload
     }
     return appReducer(state, action)

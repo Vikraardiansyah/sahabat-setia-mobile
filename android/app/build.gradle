@@ -129,7 +129,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.sahabatsetialibrary"
+        applicationId "com.sahabatsetiafix"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

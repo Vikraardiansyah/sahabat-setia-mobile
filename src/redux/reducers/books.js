@@ -1,13 +1,19 @@
-import { getBooksAction, getBookByIdAction, getBookByPageAction, getBookBySearchAction, deleteBookBySearchAction, putBookAction, postBookAction, borrowBookAction, pending, rejected, fulfilled } from '../actions/actionTypes'
+import { getBooksAction, getBookByIdAction, getBookByRecommendedAction, getBookByRecommendedIdAction, getBookByPageAction, getBookBySearchIdAction, getBookBySearchAction, getBookBySearchPageAction, deleteBookBySearchAction, getBookByGenreAction, getBookByGenreIdAction, getBookByGenrePageAction, deleteBookByGenreAction, putBookAction, postBookAction, borrowBookAction, pending, rejected, fulfilled } from '../actions/actionTypes'
 const initialValue = {
     resBooks: [],
+    resBooksHome: [],
+    resRecommended: [],
     resSearch: [],
+    resGenre: [],
+    resSearchPage: {},
+    resPagination: {},
+    resGenrePage: {},
     resBookById: {},
     isLoading: false,
     isRejected: false,
     isFulfilled: false,
     errorBooks: "",
-    resPagination: {},
+
 }
 
 const books = (prevState = initialValue, action) => {
@@ -32,6 +38,7 @@ const books = (prevState = initialValue, action) => {
                 isLoading: false,
                 isFulfilled: true,
                 resBooks: action.payload.data.data,
+                resBooksHome: action.payload.data.data,
                 resPagination: action.payload.data.pagination
             }
         case getBookByIdAction:
@@ -41,6 +48,35 @@ const books = (prevState = initialValue, action) => {
             return {
                 ...prevState,
                 resBookById: BookById[0],
+            }
+        case getBookByRecommendedAction + pending:
+            return {
+                ...prevState,
+                isLoading: true,
+                isRejected: false,
+                isFulfilled: false,
+            }
+        case getBookByRecommendedAction + rejected:
+            return {
+                ...prevState,
+                isLoading: false,
+                isRejected: true,
+                errorBooks: action.payload
+            }
+        case getBookByRecommendedAction + fulfilled:
+            return {
+                ...prevState,
+                isLoading: false,
+                isFulfilled: true,
+                resRecommended: action.payload.data.data,
+            }
+        case getBookByRecommendedIdAction:
+            const BookByRecommendedId = prevState.resRecommended.filter(
+                book => book.id === action.payload
+            )
+            return {
+                ...prevState,
+                resBookById: BookByRecommendedId[0],
             }
         case getBookByPageAction + pending:
             return {
@@ -84,12 +120,104 @@ const books = (prevState = initialValue, action) => {
                 ...prevState,
                 isLoading: false,
                 isFulfilled: true,
-                resSearch: action.payload.data.data
+                resSearch: action.payload.data.data,
+                resSearchPage: action.payload.data.pagination,
+            }
+        case getBookBySearchIdAction:
+            const searchById = prevState.resSearch.filter(
+                book => book.id === action.payload
+            )
+            return {
+                ...prevState,
+                resBookById: searchById[0],
+            }
+        case getBookBySearchPageAction + pending:
+            return {
+                ...prevState,
+                isLoading: true,
+                isRejected: false,
+                isFulfilled: false,
+            }
+        case getBookBySearchPageAction + rejected:
+            return {
+                ...prevState,
+                isLoading: false,
+                isRejected: true,
+                errorBooks: action.payload.response.data.data,
+            }
+        case getBookBySearchPageAction + fulfilled:
+            const dataSearchPage = prevState.resSearch.concat(action.payload.data.data)
+            return {
+                ...prevState,
+                isLoading: false,
+                isFulfilled: true,
+                resSearch: dataSearchPage,
+                resSearchPage: action.payload.data.pagination,
             }
         case deleteBookBySearchAction:
             return {
                 ...prevState,
                 resSearch: [],
+                resSearchPage: {},
+            }
+        case getBookByGenreAction + pending:
+            return {
+                ...prevState,
+                isLoading: true,
+                isRejected: false,
+                isFulfilled: false,
+            }
+        case getBookByGenreAction + rejected:
+            return {
+                ...prevState,
+                isLoading: false,
+                isRejected: true,
+                errorBooks: action.payload.response.data.data,
+            }
+        case getBookByGenreAction + fulfilled:
+            return {
+                ...prevState,
+                isLoading: false,
+                isFulfilled: true,
+                resGenre: action.payload.data.data,
+                resGenrePage: action.payload.data.pagination,
+            }
+        case getBookByGenreIdAction:
+            const genreById = prevState.resGenre.filter(
+                book => book.id === action.payload
+            )
+            return {
+                ...prevState,
+                resBookById: genreById[0],
+            }
+        case getBookByGenrePageAction + pending:
+            return {
+                ...prevState,
+                isLoading: true,
+                isRejected: false,
+                isFulfilled: false,
+            }
+        case getBookByGenrePageAction + rejected:
+            return {
+                ...prevState,
+                isLoading: false,
+                isRejected: true,
+                errorBooks: action.payload.response.data.data,
+            }
+        case getBookByGenrePageAction + fulfilled:
+            const dataGenrePage = prevState.resGenre.concat(action.payload.data.data)
+            return {
+                ...prevState,
+                isLoading: false,
+                isFulfilled: true,
+                resGenre: dataGenrePage,
+                resGenrePage: action.payload.data.pagination,
+            }
+        case deleteBookByGenreAction:
+            return {
+                ...prevState,
+                resGenre: [],
+                resGenrePage: {},
             }
         case putBookAction + pending:
             return {
