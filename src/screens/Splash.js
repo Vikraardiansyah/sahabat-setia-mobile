@@ -1,14 +1,13 @@
-import React, { Component } from 'react';
-import { View, StyleSheet, StatusBar, Image, Text } from 'react-native';
-import SpalshIcon from '../images/splash-icon.png'
-import { connect } from "react-redux";
-import { getBooksActionCreator } from "../redux/actions/books";
+import React, {Component} from 'react';
+import {View, StyleSheet, StatusBar, Image, Text} from 'react-native';
+import SpalshIcon from '../images/splash-icon.png';
+import {connect} from 'react-redux';
+import {getBooksActionCreator} from '../redux/actions/books';
 
 class Splash extends Component {
-
   state = {
     limit: 4,
-  }
+  };
 
   async componentDidMount() {
     const data = await this.navigateToHome();
@@ -18,14 +17,14 @@ class Splash extends Component {
   }
 
   navigateToHome = async () => {
-    const wait = time => new Promise((resolve) => setTimeout(resolve, time));
-    return wait(2000).then(() => this.props.navigation.navigate('Home'))
+    const wait = time => new Promise(resolve => setTimeout(resolve, time));
+    return wait(2000).then(() => this.props.navigation.navigate('Home'));
   };
 
   render() {
     return (
       <View style={styles.container}>
-        <StatusBar showHideTransition='fade' />
+        <StatusBar showHideTransition="fade" />
         <Image style={styles.image} source={SpalshIcon} />
         <Text style={styles.text}>Sahabat Setia</Text>
       </View>
@@ -41,28 +40,29 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 150,
-    height: 150
+    height: 150,
   },
   text: {
     fontSize: 30,
-    fontWeight: 'bold'
-  }
-})
+    fontWeight: 'bold',
+  },
+});
 
-const mapStateToProps = ({
-  books,
-}) => {
+const mapStateToProps = ({books}) => {
   return {
     books,
-  }
-}
+  };
+};
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    getBooksAction: (data) => {
-      dispatch(getBooksActionCreator(data))
+    getBooksAction: data => {
+      dispatch(getBooksActionCreator(data));
     },
-  }
-}
+  };
+};
 
-export default connect(mapStateToProps, mapDispatchToProps)(Splash)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Splash);

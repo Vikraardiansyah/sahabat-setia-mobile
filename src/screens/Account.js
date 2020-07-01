@@ -1,114 +1,144 @@
-import React, { Component } from "react"
-import { StyleSheet, View, SafeAreaView } from "react-native"
-import { ListItem, Text, Header, Button } from "react-native-elements"
-import { TouchableOpacity } from "react-native-gesture-handler"
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import Modal from "react-native-modal";
-import { connect } from "react-redux";
-import { logoutActionCreator } from "../redux/actions/logout";
+import React, {Component} from 'react';
+import {StyleSheet, View, SafeAreaView} from 'react-native';
+import {ListItem, Text, Header, Button} from 'react-native-elements';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Modal from 'react-native-modal';
+import {connect} from 'react-redux';
+import {logoutActionCreator} from '../redux/actions/logout';
 
 class Account extends Component {
-
   state = {
     modalLogout: false,
-  }
+  };
 
   login = () => {
-    this.props.navigation.navigate('Login')
-  }
+    this.props.navigation.navigate('Login');
+  };
 
   logout = () => {
-    this.props.logoutAction()
-  }
+    this.props.logoutAction();
+  };
 
   goToHistory = () => {
-    this.props.navigation.navigate('History')
-  }
+    this.props.navigation.navigate('History');
+  };
 
   goToOrder = () => {
-    this.props.navigation.navigate('Order')
-  }
+    this.props.navigation.navigate('Order');
+  };
 
   toggleModalLogout = () => {
     this.setState({
       modalLogout: !this.state.modalLogout,
-    })
-  }
+    });
+  };
 
   render() {
-    const { isFulfilled, response } = this.props.login
-    const { modalLogout } = this.state
+    const {isFulfilled, response} = this.props.login;
+    const {modalLogout} = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <Header
           containerStyle={styles.header}
           placement="left"
           centerComponent={{
-            text: isFulfilled ? `${response.name}` : `Account`,
-            style: { color: '#000000', fontSize: 22 }
+            text: 'Account',
+            style: {color: '#000000', fontSize: 22},
           }}
         />
-        <View style={{ marginTop: 20 }}>
-          {response.role === 1 ?
-            <TouchableOpacity onPress={this.goToOrder}>
+        <View style={styles.list}>
+          {isFulfilled ? (
+            <>
               <ListItem
-                key='order'
-                title='Order'
-                leftIcon={<MaterialCommunityIcons name='alert-circle-outline' size={24} color='#b2b6bb' />}
-                topDivider
+                leftAvatar={{
+                  source: {
+                    uri: `https://ui-avatars.com/api/?background=B2B6BB&color=000000&size=128&name=${
+                      response.name
+                    }`,
+                  },
+                }}
+                title={response.name}
+                subtitle={response.email}
                 bottomDivider
-                chevron
-                containerStyle={styles.listItem}
               />
-            </TouchableOpacity> : <></>}
-          {isFulfilled ? <>
-            <TouchableOpacity onPress={this.goToHistory}>
-              <ListItem
-                key='history'
-                title='History'
-                leftIcon={<MaterialCommunityIcons name='history' size={24} color='#b2b6bb' />}
-                topDivider
-                bottomDivider
-                chevron
-                containerStyle={styles.listItem}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={this.toggleModalLogout}>
-              <ListItem
-                key='logout'
-                title='Logout'
-                leftIcon={<MaterialCommunityIcons name='logout' size={24} color='#b2b6bb' />}
-                bottomDivider
-                chevron
-                containerStyle={styles.listItem}
-              />
-            </TouchableOpacity>
-          </> :
+              <TouchableOpacity onPress={this.goToHistory}>
+                <ListItem
+                  key="history"
+                  title="History"
+                  leftIcon={
+                    <MaterialCommunityIcons
+                      name="history"
+                      size={24}
+                      color="#b2b6bb"
+                    />
+                  }
+                  bottomDivider
+                  chevron
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={this.toggleModalLogout}>
+                <ListItem
+                  key="logout"
+                  title="Logout"
+                  leftIcon={
+                    <MaterialCommunityIcons
+                      name="logout"
+                      size={24}
+                      color="#b2b6bb"
+                    />
+                  }
+                  bottomDivider
+                  chevron
+                />
+              </TouchableOpacity>
+            </>
+          ) : (
             <TouchableOpacity onPress={this.login}>
               <ListItem
-                key='login'
-                title='Login'
-                leftIcon={<MaterialCommunityIcons name='login' size={24} color='#b2b6bb' />}
-                topDivider
+                key="login"
+                title="Login"
+                leftIcon={
+                  <MaterialCommunityIcons
+                    name="login"
+                    size={24}
+                    color="#b2b6bb"
+                  />
+                }
                 bottomDivider
                 chevron
-                containerStyle={styles.listItem}
               />
             </TouchableOpacity>
-          }
+          )}
         </View>
         {/* modal logout */}
-        <Modal isVisible={modalLogout} onBackButtonPress={this.toggleModalLogout} onBackdropPress={this.toggleModalLogout} >
-          <View style={{ flex: 0.1, backgroundColor: "white", borderRadius: 10, justifyContent: 'center', padding: 20, margin: 50 }}>
-            <Text style={{ textAlign: 'center', fontSize: 20 }}>Are you sure want to logout?</Text>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-              <Button title="Yes" type="clear" onPress={() => { this.toggleModalLogout(); this.logout() }} />
-              <Button title="No" type="clear" onPress={this.toggleModalLogout} />
+        <Modal
+          isVisible={modalLogout}
+          onBackButtonPress={this.toggleModalLogout}
+          onBackdropPress={this.toggleModalLogout}>
+          <View style={styles.containerModal}>
+            <Text style={styles.textModal}>Are you sure want to logout?</Text>
+            <View style={styles.buttonModalView}>
+              <Button
+                title="Yes"
+                type="clear"
+                containerStyle={styles.buttonModal}
+                onPress={() => {
+                  this.toggleModalLogout();
+                  this.logout();
+                }}
+              />
+              <Button
+                title="No"
+                type="clear"
+                containerStyle={styles.buttonModal}
+                onPress={this.toggleModalLogout}
+              />
             </View>
           </View>
         </Modal>
       </SafeAreaView>
-    )
+    );
   }
 }
 
@@ -119,27 +149,56 @@ const styles = StyleSheet.create({
   header: {
     paddingTop: 0,
     height: 60,
-    backgroundColor: "#F4F4F4"
+    backgroundColor: '#CDD5DC',
+    borderBottomColor: '#CDD5DC',
+    elevation: 10,
   },
+  list: {},
   listItem: {
-    backgroundColor: "#f4f4f4"
-  }
-})
+    backgroundColor: '#f4f4f4',
+  },
+  modal: {
+    position: 'absolute',
+    bottom: 17,
+    right: 15,
+    zIndex: 1,
+  },
+  containerModal: {
+    flex: 0.1,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    justifyContent: 'center',
+    padding: 20,
+    margin: 50,
+  },
+  textModal: {
+    textAlign: 'center',
+    fontSize: 20,
+  },
+  buttonModalView: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  buttonModal: {
+    width: 120,
+  },
+});
 
-const mapStateToProps = ({
-  login,
-}) => {
+const mapStateToProps = ({login}) => {
   return {
     login,
-  }
-}
+  };
+};
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
     logoutAction: () => {
-      dispatch(logoutActionCreator())
+      dispatch(logoutActionCreator());
     },
-  }
-}
+  };
+};
 
-export default connect(mapStateToProps, mapDispatchToProps)(Account)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Account);
