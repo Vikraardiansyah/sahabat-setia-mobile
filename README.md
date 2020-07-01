@@ -31,6 +31,7 @@ Sahabat Setia Mobile is library application that can borrow and return the book,
     <img width="250" src="./ss/detail.jpg">
     <img width="250" src="./ss/sort.jpg">
     <img width="250" src="./ss/search.jpg">
+    <img width="250" src="./ss/account.jpg">
     <img width="250" src="./ss/history.jpg">
     <img width="250" src="./ss/login.jpg">
 </div>
