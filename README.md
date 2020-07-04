@@ -1,5 +1,8 @@
 # Sahabat Setia Mobile
 <img width="150" src="./src/images/splash-icon.png"/>
+<p ">
+  Built with React Native
+</p>
 
 ## Introduction
 Sahabat Setia Mobile is library mobile application that can borrow your favorite book, you can search your favotire book in recommendation, category, and all books, you can see detail book, and you can see history of book that being borrowed.
