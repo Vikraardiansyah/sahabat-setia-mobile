@@ -2,13 +2,13 @@
 <img width="150" src="./src/images/splash-icon.png"/>
 
 ## Introduction
-Sahabat Setia Mobile is library application that can borrow and return the book, you can search book in recommendation, category, and all books.
+Sahabat Setia Mobile is library mobile application that can borrow your favorite book, you can search your favotire book in recommendation, category, and all books, you can see detail book, and you can see history of book that being borrowed.
 
 ## Features
 * Users can see books without login
 * Users can borrow book if already logged in
 * Users can return book being borrowed
-* Users can see history of book being borrowed or borrowed
+* Users can see history of book that being borrowed or borrowed
 * Etc
 
 ## Requirements
