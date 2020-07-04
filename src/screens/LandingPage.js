@@ -41,11 +41,11 @@ export default class App extends React.Component {
 }
 const styles = StyleSheet.create({
   image: {
-    width: 200,
-    height: 200,
+    width: 175,
+    height: 175,
   },
   text: {
-    fontSize: 18,
+    fontSize: 20,
     textAlign: 'center',
     paddingVertical: 30,
   },

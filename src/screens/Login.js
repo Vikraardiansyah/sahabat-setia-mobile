@@ -78,9 +78,9 @@ class Login extends Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.login !== this.props.login) {
-      const {isFulfilled} = this.props.login;
+      const {isFulfilled, token} = this.props.login;
       const {refreshToken} = this.props.login.response;
-      if (isFulfilled) {
+      if (isFulfilled && token.length <= 0) {
         this.props.tokenAction(
           qs.stringify({
             token: refreshToken,

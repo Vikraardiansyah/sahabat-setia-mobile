@@ -24,6 +24,7 @@ import {
   putBorrowActionCreator,
 } from '../redux/actions/borrow';
 import {postOrderActionCreator} from '../redux/actions/order';
+const API_URL = 'http://3.92.162.78:5000';
 
 const {width, height} = Dimensions.get('window');
 
@@ -178,12 +179,12 @@ class Detail extends Component {
           </View>
           <View>
             <Image
-              source={{uri: `http://192.168.43.73:5000/${image}`}}
+              source={{uri: `${API_URL}/${image}`}}
               style={styles.imageBackground}
             />
             <View style={styles.image}>
               <Image
-                source={{uri: `http://192.168.43.73:5000/${image}`}}
+                source={{uri: `${API_URL}/${image}`}}
                 style={{width: width * 0.2, height: height * 0.15}}
               />
             </View>

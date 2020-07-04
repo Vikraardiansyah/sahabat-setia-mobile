@@ -19,6 +19,7 @@ import {getGenreActionCreator} from '../redux/actions/genre';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CategoriesImage from '../images/categories.png';
 import SpalshIcon from '../images/splash-icon.png';
+const API_URL = 'http://3.92.162.78:5000';
 
 class Home extends Component {
   state = {
@@ -109,7 +110,7 @@ class Home extends Component {
         }
         leftElement={
           <Image
-            source={{uri: `http://192.168.43.73:5000/${item.image}`}}
+            source={{uri: `${API_URL}/${item.image}`}}
             style={styles.image}
           />
         }
@@ -126,7 +127,7 @@ class Home extends Component {
       <TouchableOpacity onPress={() => this.detailRecommendedBook(item.id)}>
         <Image
           style={styles.image}
-          source={{uri: `http://192.168.43.73:5000/${item.image}`}}
+          source={{uri: `${API_URL}/${item.image}`}}
         />
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.author}>{item.author}</Text>
