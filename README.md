@@ -17,14 +17,12 @@ Sahabat Setia Mobile is library mobile application that can borrow your favorite
 ## Requirements
 * [npm](https://www.npmjs.com/get-npm)
 * [react-native](https://facebook.github.io/react-native/docs/getting-started)
-* [Sahabat-Setia-Api](https://github.com/Vikraardiansyah/sahabat-setia-api)
 
 ## Usage for development
 1. Open your terminal or command prompt
 2. Type `git clone https://github.com/Vikraardiansyah/sahabat-setia-mobile.git`
 3. Open the folder and type `npm install` for install dependencies
-4. Before run this, you must run backend first
-5. Type `react-native run-android` for run this app. **Make sure your device is connected with debugging mode**.
+4. Type `react-native run-android` for run this app.
 
 ## Screenshots
 <div align="center">
