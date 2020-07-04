@@ -11,6 +11,7 @@ import {
   getBookByPageActionCreator,
   getBookByIdActionCreator,
 } from '../redux/actions/books';
+const API_URL = 'http://3.92.162.78:5000';
 
 class AllBooks extends Component {
   state = {
@@ -96,7 +97,7 @@ class AllBooks extends Component {
         }
         leftElement={
           <Image
-            source={{uri: `http://192.168.43.73:5000/${item.image}`}}
+            source={{uri: `${API_URL}/${item.image}`}}
             style={styles.image}
           />
         }
