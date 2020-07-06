@@ -55,7 +55,7 @@ class Login extends Component {
           () => this.hideToast(),
         );
       }
-    }, 500);
+    }, 1500);
   };
 
   hideToast = () => {

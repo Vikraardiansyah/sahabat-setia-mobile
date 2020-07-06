@@ -11,7 +11,7 @@ import {
   getBookByGenrePageActionCreator,
   deleteBookByGenreActionCreator,
 } from '../redux/actions/books';
-const API_URL = 'http://3.92.162.78:5000';
+const API_URL = 'http://54.158.250.235:5000';
 
 class GenreBook extends Component {
   state = {

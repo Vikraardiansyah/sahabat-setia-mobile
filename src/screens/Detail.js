@@ -24,7 +24,7 @@ import {
   putBorrowActionCreator,
 } from '../redux/actions/borrow';
 import {postOrderActionCreator} from '../redux/actions/order';
-const API_URL = 'http://3.92.162.78:5000';
+const API_URL = 'http://54.158.250.235:5000';
 
 const {width, height} = Dimensions.get('window');
 

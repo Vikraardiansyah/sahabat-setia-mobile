@@ -1,60 +1,68 @@
-import React, { Component } from 'react'
-import { StyleSheet, View, FlatList } from 'react-native'
-import { ListItem, Text, Header, Image, Button } from 'react-native-elements'
-import Ionicons from "react-native-vector-icons/Ionicons";
-import { connect } from "react-redux";
-import { getOrderActionCreator } from "../redux/actions/order"
-
+import React, {Component} from 'react';
+import {StyleSheet, View, FlatList} from 'react-native';
+import {ListItem, Text, Header, Image, Button} from 'react-native-elements';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {connect} from 'react-redux';
+import {getOrderActionCreator} from '../redux/actions/order';
 
 class Order extends Component {
-  state = {
-
-  }
+  state = {};
 
   async componentDidMount() {
-    const { getOrderAction, order } = this.props
-    const { token, response, } = this.props.login
+    const {getOrderAction, order} = this.props;
+    const {token, response} = this.props.login;
     if (!order.isFulfilled) {
-      await getOrderAction(token)
+      await getOrderAction(token);
     }
   }
 
+  keyExtractor = (item, index) => index.toString();
 
-  keyExtractor = (item, index) => index.toString()
-
-  renderItem = ({ item }) => (
+  renderItem = ({item}) => (
     <ListItem
       title={item.title}
       subtitle={
         <View style={styles.subtitleView}>
           <Text style={styles.ratingText}>{item.name}</Text>
           <Text style={styles.ratingText}>{item.email}</Text>
-          <Text style={styles.ratingText}>Order: {new Date(item.order_at).toLocaleDateString()}</Text>
+          <Text style={styles.ratingText}>
+            Order: {new Date(item.order_at).toLocaleDateString()}
+          </Text>
         </View>
       }
-      leftElement={<Image
-        source={{ uri: `http://192.168.43.73:5000/${item.image}` }}
-        style={styles.image} />}
+      leftElement={
+        <Image
+          source={{uri: `http://192.168.43.73:5000/${item.image}`}}
+          style={styles.image}
+        />
+      }
       topDivider
     />
-  )
+  );
 
   goBack = () => {
-    this.props.navigation.goBack()
-  }
+    this.props.navigation.goBack();
+  };
 
   render() {
-    const { resOrder } = this.props.order
+    const {resOrder} = this.props.order;
     return (
       <View style={styles.container}>
-        <Header containerStyle={{ paddingTop: -30, height: 60 }}
+        <Header
+          containerStyle={{paddingTop: -30, height: 60}}
           backgroundColor="#F8"
           placement="left"
-          leftComponent={<Button
-            buttonStyle={{ backgroundColor: "#f4f4f4", borderRadius: 50 }}
-            icon={<Ionicons name="md-arrow-back" size={24} />}
-            onPress={this.goBack} />}
-          centerComponent={{ text: 'Order', style: { color: '#000000', fontSize: 22 } }}
+          leftComponent={
+            <Button
+              buttonStyle={{backgroundColor: '#f4f4f4', borderRadius: 50}}
+              icon={<Ionicons name="md-arrow-back" size={24} />}
+              onPress={this.goBack}
+            />
+          }
+          centerComponent={{
+            text: 'Order',
+            style: {color: '#000000', fontSize: 22},
+          }}
         />
         <FlatList
           keyExtractor={this.keyExtractor}
@@ -62,7 +70,7 @@ class Order extends Component {
           renderItem={this.renderItem}
         />
       </View>
-    )
+    );
   }
 }
 
@@ -76,11 +84,11 @@ styles = StyleSheet.create({
   },
   ratingImage: {
     height: 19.21,
-    width: 100
+    width: 100,
   },
   ratingText: {
     paddingLeft: 10,
-    color: '#7e7e7e'
+    color: '#7e7e7e',
   },
   image: {
     width: 101,
@@ -91,26 +99,26 @@ styles = StyleSheet.create({
     width: 100,
     height: 50,
     borderRadius: 50,
-    backgroundColor: '#FF0000'
+    backgroundColor: '#FF0000',
   },
-})
+});
 
-const mapStateToProps = ({
-  order,
-  login,
-}) => {
+const mapStateToProps = ({order, login}) => {
   return {
     order,
-    login
-  }
-}
+    login,
+  };
+};
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    getOrderAction: (token) => {
-      dispatch(getOrderActionCreator(token))
+    getOrderAction: token => {
+      dispatch(getOrderActionCreator(token));
     },
-  }
-}
+  };
+};
 
-export default connect(mapStateToProps, mapDispatchToProps)(Order)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Order);

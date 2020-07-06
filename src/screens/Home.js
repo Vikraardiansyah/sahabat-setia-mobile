@@ -19,7 +19,7 @@ import {getGenreActionCreator} from '../redux/actions/genre';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CategoriesImage from '../images/categories.png';
 import SpalshIcon from '../images/splash-icon.png';
-const API_URL = 'http://3.92.162.78:5000';
+const API_URL = 'http://54.158.250.235:5000';
 
 class Home extends Component {
   state = {

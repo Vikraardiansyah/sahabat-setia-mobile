@@ -1,6 +1,6 @@
 import Axios from 'axios';
 // 192.168.43
-const API_URL = 'http://3.92.162.78:5000';
+const API_URL = 'http://54.158.250.235:5000';
 export const register = body => {
   return Axios.post(`${API_URL}/auth/register`, body);
 };
