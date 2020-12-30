@@ -11,7 +11,7 @@ import {
   getBookByPageActionCreator,
   getBookByIdActionCreator,
 } from '../redux/actions/books';
-const API_URL = 'serene-ravine-24514.herokuapp.com';
+const API_URL = 'https://serene-ravine-24514.herokuapp.com';
 
 class AllBooks extends Component {
   state = {
@@ -74,7 +74,7 @@ class AllBooks extends Component {
     }
   };
 
-  detailBook = (id) => {
+  detailBook = id => {
     this.props.navigation.navigate('Detail', {
       id,
     });
@@ -205,18 +205,21 @@ const mapStateToProps = ({books}) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    getBooksAction: (data) => {
+    getBooksAction: data => {
       dispatch(getBooksActionCreator(data));
     },
-    getBookByPageAction: (data) => {
+    getBookByPageAction: data => {
       dispatch(getBookByPageActionCreator(data));
     },
-    getBookByIdAction: (id) => {
+    getBookByIdAction: id => {
       dispatch(getBookByIdActionCreator(id));
     },
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AllBooks);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AllBooks);

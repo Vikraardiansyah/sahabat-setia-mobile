@@ -34,7 +34,9 @@ class CardBooks extends Component {
             <CardItem>
               <Body style={{flex: 1, flexDirection: 'row'}}>
                 <Image
-                  source={{uri: `serene-ravine-24514.herokuapp.com/${image}`}}
+                  source={{
+                    uri: `https://serene-ravine-24514.herokuapp.com/${image}`,
+                  }}
                   style={{
                     height: widthImage * 1.4,
                     width: widthImage,

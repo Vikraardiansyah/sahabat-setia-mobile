@@ -12,7 +12,7 @@ import {
   putBorrowActionCreator,
 } from '../redux/actions/borrow';
 import {borrowBookActionCreator} from '../redux/actions/books';
-const API_URL = 'serene-ravine-24514.herokuapp.com';
+const API_URL = 'https://serene-ravine-24514.herokuapp.com';
 
 class History extends Component {
   state = {
@@ -245,12 +245,12 @@ const mapStateToProps = ({order, borrow, login}) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    getOrderAction: (token) => {
+    getOrderAction: token => {
       dispatch(getOrderActionCreator(token));
     },
-    getBorrowAction: (token) => {
+    getBorrowAction: token => {
       dispatch(getBorrowActionCreator(token));
     },
     getBorrowByIdAction: (id, token) => {
@@ -265,4 +265,7 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(History);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(History);

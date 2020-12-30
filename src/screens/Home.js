@@ -19,7 +19,7 @@ import {getGenreActionCreator} from '../redux/actions/genre';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CategoriesImage from '../images/categories.png';
 import SpalshIcon from '../images/splash-icon.png';
-const API_URL = 'serene-ravine-24514.herokuapp.com';
+const API_URL = 'https://serene-ravine-24514.herokuapp.com';
 
 class Home extends Component {
   state = {
@@ -75,20 +75,20 @@ class Home extends Component {
     );
   };
 
-  detailBook = (id) => {
+  detailBook = id => {
     this.props.navigation.navigate('Detail', {
       id,
     });
   };
 
-  detailRecommendedBook = (id) => {
+  detailRecommendedBook = id => {
     this.props.navigation.navigate('Detail', {
       id,
       page: 'recommended',
     });
   };
 
-  genreBook = (search) => {
+  genreBook = search => {
     this.props.navigation.navigate('GenreBook', {
       search,
     });
@@ -335,12 +335,12 @@ const mapStateToProps = ({books, login, genre}) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    getBooksAction: (data) => {
+    getBooksAction: data => {
       dispatch(getBooksActionCreator(data));
     },
-    getBookByPageAction: (data) => {
+    getBookByPageAction: data => {
       dispatch(getBookByPageActionCreator(data));
     },
     getBookByRecommendedAction: () => {
@@ -352,4 +352,7 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Home);

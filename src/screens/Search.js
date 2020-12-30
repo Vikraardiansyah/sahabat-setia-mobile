@@ -11,7 +11,7 @@ import {
   getBookBySearchPageActionCreator,
   deleteBookBySearchActionCreator,
 } from '../redux/actions/books';
-const API_URL = 'serene-ravine-24514.herokuapp.com';
+const API_URL = 'https://serene-ravine-24514.herokuapp.com';
 
 class Search extends Component {
   state = {
@@ -25,7 +25,7 @@ class Search extends Component {
 
   getBookBySearchDebounce = debounce(() => this.getBookBySearch(), 500);
 
-  updateSearch = (search) => {
+  updateSearch = search => {
     this.setState(
       {
         search,
@@ -99,7 +99,7 @@ class Search extends Component {
     }
   };
 
-  detailBook = (id) => {
+  detailBook = id => {
     this.props.navigation.navigate('Detail', {
       id,
       page: 'search',
@@ -238,12 +238,12 @@ const mapStateToProps = ({books}) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    getBookBySearchAction: (body) => {
+    getBookBySearchAction: body => {
       dispatch(getBookBySearchActionCreator(body));
     },
-    getBookBySearchPageAction: (body) => {
+    getBookBySearchPageAction: body => {
       dispatch(getBookBySearchPageActionCreator(body));
     },
     deleteBookBySearchAction: () => {
@@ -252,4 +252,7 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Search);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Search);

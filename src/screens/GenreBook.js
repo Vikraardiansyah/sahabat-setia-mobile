@@ -11,7 +11,7 @@ import {
   getBookByGenrePageActionCreator,
   deleteBookByGenreActionCreator,
 } from '../redux/actions/books';
-const API_URL = 'serene-ravine-24514.herokuapp.com';
+const API_URL = 'https://serene-ravine-24514.herokuapp.com';
 
 class GenreBook extends Component {
   state = {
@@ -81,7 +81,7 @@ class GenreBook extends Component {
     }
   };
 
-  detailBook = (id) => {
+  detailBook = id => {
     this.props.navigation.navigate('Detail', {
       id,
       page: 'genre',
@@ -210,12 +210,12 @@ const mapStateToProps = ({books}) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    getBookByGenreAction: (body) => {
+    getBookByGenreAction: body => {
       dispatch(getBookByGenreActionCreator(body));
     },
-    getBookByGenrePageAction: (body) => {
+    getBookByGenrePageAction: body => {
       dispatch(getBookByGenrePageActionCreator(body));
     },
     deleteBookByGenreAction: () => {
@@ -224,4 +224,7 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(GenreBook);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(GenreBook);

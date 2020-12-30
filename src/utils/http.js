@@ -1,18 +1,18 @@
 import Axios from 'axios';
 // 192.168.43
-const API_URL = 'serene-ravine-24514.herokuapp.com';
-export const register = (body) => {
+const API_URL = 'https://serene-ravine-24514.herokuapp.com';
+export const register = body => {
   return Axios.post(`${API_URL}/auth/register`, body);
 };
 
-export const loginUser = (body) => {
+export const loginUser = body => {
   return Axios.post(`${API_URL}/auth/login`, body);
 };
-export const tokenUser = (body) => {
+export const tokenUser = body => {
   return Axios.post(`${API_URL}/auth/token`, body);
 };
 
-export const getBooks = (data) => {
+export const getBooks = data => {
   return Axios.get(`${API_URL}/books?${data}`);
 };
 
@@ -53,7 +53,7 @@ export const postBook = (body, token) => {
 //   });
 // };
 
-export const getAuthor = (token) => {
+export const getAuthor = token => {
   return Axios.get(`${API_URL}/author`, {
     headers: {
       Authorization: token,
@@ -85,7 +85,7 @@ export const getAuthor = (token) => {
 //   });
 // };
 
-export const getGenre = (token) => {
+export const getGenre = token => {
   return Axios.get(`${API_URL}/genre`, {
     headers: {
       Authorization: token,
@@ -117,7 +117,7 @@ export const getGenre = (token) => {
 //   });
 // };
 
-export const getStatus = (token) => {
+export const getStatus = token => {
   return Axios.get(`${API_URL}/status`, {
     headers: {
       Authorization: token,
@@ -133,7 +133,7 @@ export const borrowBook = (id, body, token) => {
   });
 };
 
-export const getBorrow = (token) => {
+export const getBorrow = token => {
   return Axios.get(`${API_URL}/borrow`, {
     headers: {
       Authorization: token,
@@ -165,7 +165,7 @@ export const putBorrow = (body, token) => {
   });
 };
 
-export const getOrder = (token) => {
+export const getOrder = token => {
   return Axios.get(`${API_URL}/order`, {
     headers: {
       Authorization: token,

@@ -24,7 +24,7 @@ import {
   putBorrowActionCreator,
 } from '../redux/actions/borrow';
 import {postOrderActionCreator} from '../redux/actions/order';
-const API_URL = 'serene-ravine-24514.herokuapp.com';
+const API_URL = 'https://serene-ravine-24514.herokuapp.com';
 
 const {width, height} = Dimensions.get('window');
 
@@ -402,24 +402,24 @@ const mapStateToProps = ({books, borrow, login}) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    getBookByIdAction: (id) => {
+    getBookByIdAction: id => {
       dispatch(getBookByIdActionCreator(id));
     },
-    getBookBySearchIdAction: (id) => {
+    getBookBySearchIdAction: id => {
       dispatch(getBookBySearchIdActionCreator(id));
     },
-    getBookByGenreIdAction: (id) => {
+    getBookByGenreIdAction: id => {
       dispatch(getBookByGenreIdActionCreator(id));
     },
-    getBookByRecommendedIdAction: (id) => {
+    getBookByRecommendedIdAction: id => {
       dispatch(getBookByRecommendedIdActionCreator(id));
     },
     borrowBookAction: (id, body, token) => {
       dispatch(borrowBookActionCreator(id, body, token));
     },
-    getBorrowAction: (token) => {
+    getBorrowAction: token => {
       dispatch(getBorrowActionCreator(token));
     },
     postBorrowAction: (body, token) => {
@@ -434,4 +434,7 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Detail);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Detail);
