@@ -38,7 +38,7 @@ Sahabat Setia Mobile is library mobile application that can borrow your favorite
 </div>
 
 ## Release APK
-<a href="https://bit.ly/sahabat-setia">
+<a href="https://drive.google.com/file/d/15JNbgCQwPNBLt9i17W4IHSsDKjNAZECq/view?usp=sharing">
   <img src="https://img.shields.io/badge/Download%20on%20-Google%20Drive-blue.svg?style=popout&logo=google-drive"/>
 </a>
 
