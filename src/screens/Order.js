@@ -32,7 +32,7 @@ class Order extends Component {
       }
       leftElement={
         <Image
-          source={{uri: `http://192.168.43.73:5000/${item.image}`}}
+          source={{uri: `serene-ravine-24514.herokuapp.com/${item.image}`}}
           style={styles.image}
         />
       }
@@ -110,15 +110,12 @@ const mapStateToProps = ({order, login}) => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    getOrderAction: token => {
+    getOrderAction: (token) => {
       dispatch(getOrderActionCreator(token));
     },
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Order);
+export default connect(mapStateToProps, mapDispatchToProps)(Order);
